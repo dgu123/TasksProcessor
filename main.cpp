@@ -43,15 +43,17 @@ int _tmain(int argc, _TCHAR* argv[])
 	std::cout << fr.get() << std::endl;
 
 	//Charge tasks
+	std::vector<std::future<std::string>> results;
 	for (int i = 0; i < 10; ++i)
-	{
-		auto p = processor.Add(std::bind(&SomeIO::FuncWithExc, ioObj, i));
+		results.emplace_back(processor.Add(std::bind(&SomeIO::FuncWithExc, ioObj, i)));
 
+	for (auto &i : results)
+	{
 		try
 		{
-			std::cout << p.get() << std::endl;
+			std::cout << i.get() << std::endl;
 		}
-		catch(const std::exception &e)
+		catch (const std::exception &e)
 		{
 			std::cout << e.what() << std::endl;
 		}
